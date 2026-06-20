@@ -1,0 +1,6 @@
+{
+  "name": "LPH Al-Ghazali Halal Portal",
+  "description": "Cloning Landing Page LPH Al-Ghazali dengan fitur pendaftaran akun, dashboard sertifikasi, analisis real-time, autentikasi dua faktor, tanda tangan elektronik, notifikasi email/SMS otomatis, cetak sertifikat, dan dukungan mode gelap.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
