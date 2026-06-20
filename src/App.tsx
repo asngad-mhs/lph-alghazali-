@@ -4,7 +4,7 @@ import {
   Moon, Sun, Activity, ClipboardList, Plus, FileSpreadsheet, FileText, 
   CheckCircle, Clock, AlertTriangle, Play, HelpCircle, FileSignature, 
   Send, Smartphone, Mail, Users, CheckCircle2, ChevronRight, Sparkles,
-  PenTool, Printer
+  PenTool, Printer, Languages, Globe
 } from 'lucide-react';
 
 import { HalalApplication, UserAccount, SystemNotification, ProductType } from './types';
@@ -107,6 +107,132 @@ const GLOBAL_HALAL_DIRECTORY = [
   { number: 'ID31110007812540226', company: 'PT Kosmetika Syariah Utama', product: 'Glow-Up Halal Cream', date: '05-06-2026', type: 'Kosmetik' },
 ];
 
+const TRANSLATIONS = {
+  id: {
+    beranda: 'Beranda',
+    profile: 'Profile',
+    layanan: 'Layanan',
+    proses: 'Proses',
+    regulasi: 'Regulasi',
+    berita: 'Berita',
+    faq: 'FAQ',
+    kontak: 'Kontak',
+    lph_official: 'Lembaga Pemeriksa Halal',
+    herotitle1: 'Lembaga Pemeriksa Halal',
+    herotitle2: 'LPH Al-Ghazali Cilacap',
+    herodesc: 'Satu-satunya portal integrasi sertifikasi halal. Ajukan sertifikasi, unggah dokumen, dan pantau status secara real-time dari mana saja dengan infrastruktur Cloud LPH Al-Ghazali.',
+    cariu_title: 'Portal Pelaku Usaha',
+    cari_btn: 'Cari Direktori Halal',
+    layanan_sub: 'Layanan Kami',
+    layanan_title: 'Solusi Sertifikasi Halal Komprehensif',
+    layanan_desc: 'Kami menyediakan berbagai jenis layanan pemeriksaan kehalalan produk untuk mempermudah operasional bisnis Pelaku Usaha di Indonesia.',
+    success_toast: 'Bahasa Berhasil Diubah',
+    sim_toast: 'Bahasa diubah ke Bahasa Indonesia (Simulasi)',
+    
+    // Additional localization keys
+    profile_sub: 'PROFIL LPH AL-GHAZALI',
+    profile_title: 'Mewujudkan Ekosistem Halal Madani Selaras Syariat',
+    profile_desc: 'LPH Al-Ghazali didirikan sebagai wujud kepedulian sosial keagamaan Yayasan Al-Ghazali Cilacap untuk menjamin tersedianya konsumsi dan produk halal bagi seluruh kalangan masyarakat Indonesia.',
+    proses_sub: 'Alur & Proses',
+    proses_title: '5 Langkah Mudah Memperoleh Sertifikat',
+    proses_desc: 'Alur registrasi yang transparan dan terdokumentasi rapi, mulai dari registrasi akun hingga penyerahan sertifikat fisik.',
+    regulasi_sub: 'Payung Hukum',
+    regulasi_title: 'Undang-Undang & Regulasi Halal',
+    regulasi_desc: 'Setiap proses pengujian produk di LPH Al-Ghazali berpijak pada landasan regulasi perundang-undangan Negara Kesatuan Republik Indonesia.',
+    berita_sub: 'Berita Terkini',
+    berita_title: 'Kabar & Pengumuman LPH Al-Ghazali',
+    berita_desc: 'Pantau artikel, wawasan sertifikasi, serta agenda workshop jaminan mutu produk halal bersama instansi daerah Kabupaten Cilacap.',
+    faq_sub: 'Tanya Jawab',
+    faq_title: 'Pertanyaan yang Sering Diajukan',
+    faq_desc: 'Temukan informasi mendalam seputar durasi, syarat wajib halal, penentuan biaya, masa berlaku ketetapan syariah, hingga otentikasi data 2FA.',
+    kontak_sub: 'Hubungi Kami',
+    kontak_title: 'Hubungi Pusat Layanan Halal Cilacap',
+    kontak_desc: 'Ajukan pertanyaan, konsultasikan kendala berkas, atau bicarakan kebutuhan sertifikasi langsung dengan admin jaminan halal kami.'
+  },
+  en: {
+    beranda: 'Home',
+    profile: 'Profile',
+    layanan: 'Services',
+    proses: 'Process',
+    regulasi: 'Regulation',
+    berita: 'News',
+    faq: 'FAQ',
+    kontak: 'Contact',
+    lph_official: 'Halal Inspection Agency',
+    herotitle1: 'Halal Examination Institution',
+    herotitle2: 'LPH Al-Ghazali Cilacap',
+    herodesc: 'The only integrated portal for digital halal certification. Apply, upload documents, and monitor your application status in real-time from anywhere via the cloud infrastructure of LPH Al-Ghazali.',
+    cariu_title: 'Business Portal',
+    cari_btn: 'Search Halal Directory',
+    layanan_sub: 'Our Services',
+    layanan_title: 'Comprehensive Halal Certification Solutions',
+    layanan_desc: 'We provide various types of product halal examination services to ease the business operations of Business Actors in Indonesia.',
+    success_toast: 'Language Changed Successfully',
+    sim_toast: 'Language changed to English (Simulation)',
+    
+    // Additional localization keys
+    profile_sub: 'LPH AL-GHAZALI PROFILE',
+    profile_title: 'Unifying a Civic Halal Ecosystem in Harmony with Sharia',
+    profile_desc: 'LPH Al-Ghazali was founded as a socio-religious initiative of the Al-Ghazali Cilacap Foundation to guarantee authentic halal food and product availability for the wider public of Indonesia.',
+    proses_sub: 'Workflow & Process',
+    proses_title: '5 Simple Steps to Obtain Your Certification',
+    proses_desc: 'A transparent and well-structured registration process, from secure account registration to the final physical certificate issuance.',
+    regulasi_sub: 'Legal Framework',
+    regulasi_title: 'State Laws & Halal Regulations',
+    regulasi_desc: 'Every scientific testing and audit procedure at LPH Al-Ghazali is anchored on the robust constitutional regulations of the Republic of Indonesia.',
+    berita_sub: 'Latest Updates',
+    berita_title: 'LPH Al-Ghazali News & Announcements',
+    berita_desc: 'Track recent articles, critical certification insights, and mutual workshop events on product halal assurance with Cilacap regional sectors.',
+    faq_sub: 'Questions & Answers',
+    faq_title: 'Frequently Asked Questions',
+    faq_desc: 'Explore comprehensive information covering audit durations, mandatory rules, cost calculations, validity periods, and multi-factor 2FA logs.',
+    kontak_sub: 'Support Line',
+    kontak_title: 'Reach Out to LPH Al-Ghazali Center',
+    kontak_desc: 'Ask questions, consult on compliance gaps, or discuss your business certification path with our professional halal support team.'
+  },
+  ar: {
+    beranda: 'الرئيسية',
+    profile: 'الملف الشخصي',
+    layanan: 'الخدمات',
+    proses: 'الخطوات',
+    regulasi: 'اللوائح',
+    berita: 'الأخبار',
+    faq: 'الأسئلة الشائعة',
+    kontak: 'اتصل بنا',
+    lph_official: 'معهد فحص الحلال',
+    herotitle1: 'الهيئة العامة لفحص الحلال',
+    herotitle2: 'لجنة الغزالي جيلاجاب',
+    herodesc: 'البوابة المتطورة والوحيدة المتكاملة للحصول على شهادة الحلال الرقمية. تقديم الطلبات، تحميل المستندات، ومتابعة حالة ملفك فورياً من أي مكان عبر البنية التحتية السحابية لـ LPH الغزالي.',
+    cariu_title: 'بوابة الأعمال',
+    cari_btn: 'البحث في دليل الحلال',
+    layanan_sub: 'خدماتنا المميزة',
+    layanan_title: 'حلول شاملة للتدقيق والاعتماد الحلال',
+    layanan_desc: 'نحن نقدم خدمات مختلفة لفحص المنتجات وإصدار شهادات الحلال لتسهيل المعاملات والأنشطة التجارية في إندونيسيا.',
+    success_toast: 'تم تغيير اللغة بنجاح',
+    sim_toast: 'تم تحويل لغة العرض إلى العربية (تغيير تجريبي)',
+    
+    // Additional localization keys
+    profile_sub: 'ملف مؤسسة معهد الغزالي لشؤون الحلال',
+    profile_title: 'بناء وتطوير منظومة حلال مدنية متكاملة متوافقة مع الشريعة الغراء',
+    profile_desc: 'تأسس معهد الغزالي لفحص الحلال كمسؤولية دينية واجتماعية بمظلة مؤسسة الغزالي الثقافية بجيلاجاب بهدف ضمان توافر الأغذية والمصنفات الطاهرة والاستهلاك السليم لكافة شرائح المجتمع الإندونيسي.',
+    proses_sub: 'سير المعاملات والخطوات',
+    proses_title: '٥ خطوات ميسرة وسريعة لاستخراج شهادة الحلال',
+    proses_desc: 'نظام تقديم وتسجيل رقمي متكامل وواضح، يبدأ من تسجيل حساب إلكتروني آمن حتى استلام الشهادة الورقية المعتمدة رسميًا.',
+    regulasi_sub: 'الغطاء والأطر القانونية',
+    regulasi_title: 'الدستور والتشريعات المنظمة لشهادة الحلال',
+    regulasi_desc: 'ترتكز جميع عمليات القياس المختبري والفحص العلمي بمعهد الغزالي للحلال على الأسس القانونية والقرارات الوزارية لجمهورية إندونيسيا.',
+    berita_sub: 'المركز الإعلامي',
+    berita_title: 'آخر الأخبار والفعاليات في معهد الغزالي للحلال',
+    berita_desc: 'تابع تدوينات التوجيه الإرشادي والتحاليل الدورية وجداول ورش تطوير الجودة لشركاء الأعمال والمنشآت بجيلاجاب.',
+    faq_sub: 'الأسئلة الشائعة والمكررة',
+    faq_title: 'الأسئلة الأكثر شيوعاً واستفساراً',
+    faq_desc: 'اعثر على أجوبة وافية تفصل جدول المدد الزمنية وتقدير الرسوم وطرق احتساب التكلفة وتفعيل طبقات الأمان 2FA الرقمية.',
+    kontak_sub: 'خط المساعدة والدعم الدولي',
+    kontak_title: 'تواصل مباشرة مع خدمة عملاء معهد الغزالي',
+    kontak_desc: 'اطرح تساؤلاتك واستفساراتك، واطلب مراجعة مستقلة لملفات أعمالك ومرافق التصنيع مباشرةً مع فريق المساعدة المختص.'
+  }
+};
+
 export default function App() {
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     return localStorage.getItem('theme') === 'dark';
@@ -164,6 +290,16 @@ export default function App() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   
+  // Language translation state
+  const [currentLang, setCurrentLang] = useState<'id' | 'en' | 'ar'>('id');
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+  const [langToast, setLangToast] = useState<{ title: string; message: string } | null>(null);
+
+  // Language translation helper
+  const t = (key: keyof typeof TRANSLATIONS.id) => {
+    return TRANSLATIONS[currentLang][key] || TRANSLATIONS.id[key];
+  };
+  
   // Modals / wizards
   const [wizardOpen, setWizardOpen] = useState(false);
   const [activeCertPrint, setActiveCertPrint] = useState<HalalApplication | null>(null);
@@ -188,6 +324,16 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('lph_registered_users', JSON.stringify(registeredUsers));
   }, [registeredUsers]);
+
+  // Auto-dismiss language toast
+  useEffect(() => {
+    if (langToast) {
+      const timer = setTimeout(() => {
+        setLangToast(null);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [langToast]);
 
   // Dark Mode side effects
   useEffect(() => {
@@ -576,14 +722,14 @@ export default function App() {
           {/* Navigation Links */}
           <nav className="hidden lg:flex gap-5 text-xs font-bold text-slate-600 dark:text-slate-350">
             {[
-              { label: 'Beranda', id: 'beranda-section' },
-              { label: 'Profile', id: 'tentang-section' },
-              { label: 'Layanan', id: 'layanan-section' },
-              { label: 'Proses', id: 'proses-section' },
-              { label: 'Regulasi', id: 'regulasi-section' },
-              { label: 'Berita', id: 'berita-section' },
-              { label: 'FAQ', id: 'faq-section' },
-              { label: 'Kontak', id: 'kontak-section' }
+              { label: t('beranda'), id: 'beranda-section' },
+              { label: t('profile'), id: 'tentang-section' },
+              { label: t('layanan'), id: 'layanan-section' },
+              { label: t('proses'), id: 'proses-section' },
+              { label: t('regulasi'), id: 'regulasi-section' },
+              { label: t('berita'), id: 'berita-section' },
+              { label: t('faq'), id: 'faq-section' },
+              { label: t('kontak'), id: 'kontak-section' }
             ].map((item) => (
               <button 
                 key={item.id}
@@ -605,6 +751,40 @@ export default function App() {
             >
               {isMobileMenuOpen ? <X className="w-4 h-4 text-emerald-800 dark:text-white" /> : <Menu className="w-4 h-4 text-emerald-800 dark:text-white" />}
             </button>
+
+            {/* Language Translator Options */}
+            <div className="flex items-center gap-1.5 bg-slate-105/90 dark:bg-slate-800 p-0.5 rounded-full border border-slate-200/50 dark:border-slate-700/60 shadow-2xs">
+              <button 
+                onClick={() => {
+                  setCurrentLang('id');
+                  setLangToast({ title: 'Bahasa Berhasil Diubah', message: 'Halaman utama sekarang ditampilkan dalam Bahasa Indonesia.' });
+                }}
+                className={`w-7.5 h-7.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${currentLang === 'id' ? 'bg-white dark:bg-slate-700 ring-2 ring-emerald-550 dark:ring-emerald-400 scale-105 shadow-sm' : 'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'}`}
+                title="Bahasa Indonesia (ID) 🇮🇩"
+              >
+                <span className="text-md leading-none select-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.15)]">🇮🇩</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setCurrentLang('en');
+                  setLangToast({ title: 'Language Changed', message: 'The main page is now successfully translated to English.' });
+                }}
+                className={`w-7.5 h-7.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${currentLang === 'en' ? 'bg-white dark:bg-slate-700 ring-2 ring-emerald-550 dark:ring-emerald-400 scale-105 shadow-sm' : 'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'}`}
+                title="English (EN) 🇬🇧"
+              >
+                <span className="text-md leading-none select-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.15)]">🇬🇧</span>
+              </button>
+              <button 
+                onClick={() => {
+                  setCurrentLang('ar');
+                  setLangToast({ title: 'تم تغيير لغة العرض', message: 'لقد تم تعريب نصوص الواجهة وتفعيل الترجمة بنجاح.' });
+                }}
+                className={`w-7.5 h-7.5 rounded-full transition-all flex items-center justify-center cursor-pointer ${currentLang === 'ar' ? 'bg-white dark:bg-slate-700 ring-2 ring-emerald-550 dark:ring-emerald-400 scale-105 shadow-sm' : 'hover:bg-slate-200/50 dark:hover:bg-slate-700/50'}`}
+                title="العربية (AR) 🇸🇦"
+              >
+                <span className="text-md leading-none select-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.15)]">🇸🇦</span>
+              </button>
+            </div>
 
             {/* Dark Mode toggler */}
             <button 
@@ -659,14 +839,14 @@ export default function App() {
         <div className="lg:hidden sticky top-16 z-40 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 animate-in slide-in-from-top duration-200 shadow-md">
           <nav className="flex flex-col p-4 space-y-3 font-bold text-left text-slate-600 dark:text-slate-350">
             {[
-              { label: 'Beranda', id: 'beranda-section' },
-              { label: 'Profile', id: 'tentang-section' },
-              { label: 'Layanan', id: 'layanan-section' },
-              { label: 'Proses', id: 'proses-section' },
-              { label: 'Regulasi', id: 'regulasi-section' },
-              { label: 'Berita', id: 'berita-section' },
-              { label: 'FAQ', id: 'faq-section' },
-              { label: 'Kontak', id: 'kontak-section' }
+              { label: t('beranda'), id: 'beranda-section' },
+              { label: t('profile'), id: 'tentang-section' },
+              { label: t('layanan'), id: 'layanan-section' },
+              { label: t('proses'), id: 'proses-section' },
+              { label: t('regulasi'), id: 'regulasi-section' },
+              { label: t('berita'), id: 'berita-section' },
+              { label: t('faq'), id: 'faq-section' },
+              { label: t('kontak'), id: 'kontak-section' }
             ].map((item) => (
               <button 
                 key={item.id}
@@ -677,6 +857,49 @@ export default function App() {
                 <ChevronRight className="w-3.5 h-3.5 text-slate-400" />
               </button>
             ))}
+
+            {/* Mobile Translation Flags Panel */}
+            <div className="pt-3 pb-1 border-t border-slate-105 dark:border-slate-800">
+              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest mb-2 flex items-center gap-1.5 justify-center">
+                <Languages className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                <span>PILIH BAHASA / SELECT LANGUAGE / خيارات اللغة</span>
+              </p>
+              <div className="grid grid-cols-3 gap-2">
+                <button
+                  onClick={() => {
+                    setCurrentLang('id');
+                    setLangToast({ title: 'Bahasa Berhasil Diubah', message: 'Halaman utama sekarang ditampilkan dalam Bahasa Indonesia.' });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`py-2 px-1 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${currentLang === 'id' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-800 dark:text-emerald-400 font-extrabold shadow-2xs' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80'}`}
+                >
+                  <span className="text-xl filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)]">🇮🇩</span>
+                  <span className="text-[9px] tracking-tight font-sans">Indonesia</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentLang('en');
+                    setLangToast({ title: 'Language Changed', message: 'The main page is now successfully translated to English.' });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`py-2 px-1 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${currentLang === 'en' ? 'bg-emerald-500/10 border-emerald-550 text-emerald-805 dark:text-emerald-400 font-extrabold shadow-2xs' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80'}`}
+                >
+                  <span className="text-xl filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)]">🇬🇧</span>
+                  <span className="text-[9px] tracking-tight font-sans">English</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentLang('ar');
+                    setLangToast({ title: 'تم تغيير لغة العرض', message: 'لقد تم تعريب نصوص الواجهة وتفعيل الترجمة بنجاح.' });
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className={`py-2 px-1 rounded-xl border text-center flex flex-col items-center gap-1.5 transition-all cursor-pointer ${currentLang === 'ar' ? 'bg-emerald-500/10 border-emerald-550 text-emerald-805 dark:text-emerald-400 font-extrabold shadow-2xs' : 'border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-850 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/80'}`}
+                >
+                  <span className="text-xl filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.12)]">🇸🇦</span>
+                  <span className="text-[9px] tracking-tight font-sans">العربية</span>
+                </button>
+              </div>
+            </div>
           </nav>
         </div>
       )}
@@ -752,17 +975,17 @@ export default function App() {
                 <div className="inline-block px-3 py-1 bg-emerald-500/20 border border-emerald-400/30 rounded-full">
                   <p className="text-xs font-bold text-emerald-350 tracking-wider uppercase flex items-center gap-1.5">
                     <Sparkles className="w-3.5 h-3.5" />
-                    <span>Lembaga Pemeriksa Halal</span>
+                    <span>{t('lph_official')}</span>
                   </p>
                 </div>
 
                 <h1 className="text-3xl md:text-5xl font-extrabold font-display tracking-tight leading-tight">
-                  <span className="text-white">Lembaga Pemeriksa Halal</span> <br />
-                  <span className="text-amber-400">LPH Al-Ghazali Cilacap</span>
+                  <span className="text-white">{t('herotitle1')}</span> <br />
+                  <span className="text-amber-400">{t('herotitle2')}</span>
                 </h1>
 
                 <p className="text-sm md:text-base text-emerald-100 leading-relaxed max-w-xl">
-                  Satu-satunya portal integrasi sertifikasi halal. Ajukan sertifikasi, unggah dokumen, dan pantau status secara real-time dari mana saja dengan infrastruktur Cloud LPH Al-Ghazali.
+                  {t('herodesc')}
                 </p>
 
                 <div className="flex flex-wrap gap-4 pt-2">
@@ -841,10 +1064,10 @@ export default function App() {
           {/* PROFILE / TENTANG SECTION */}
           <section id="tentang-section" className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
             <div className="lg:col-span-5 space-y-4">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">PROFIL LPH AL-GHAZALI</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">Mewujudkan Ekosistem Halal Madani Selaras Syariat</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('profile_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('profile_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                LPH Al-Ghazali didirikan sebagai wujud kepedulian sosial keagamaan Yayasan Al-Ghazali Cilacap untuk menjamin tersedianya konsumsi dan produk halal bagi seluruh kalangan masyarakat Indonesia.
+                {t('profile_desc')}
               </p>
               <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center gap-2.5">
@@ -908,10 +1131,10 @@ export default function App() {
           {/* LAYANAN SECTION */}
           <section id="layanan-section" className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center md:text-left space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Layanan Kami</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">Solusi Sertifikasi Halal Komprehensif</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('layanan_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('layanan_title')}</h2>
               <p className="text-xs md:text-sm text-slate-505 text-slate-500 dark:text-slate-400 max-w-xl">
-                Kami menyediakan berbagai jenis layanan pemeriksaan kehalalan produk untuk mempermudah operasional bisnis Pelaku Usaha di Indonesia.
+                {t('layanan_desc')}
               </p>
             </div>
 
@@ -956,10 +1179,10 @@ export default function App() {
           {/* PROSES SECTION */}
           <section id="proses-section" className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center md:text-left space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Alur & Proses</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">5 Langkah Mudah Memperoleh Sertifikat</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('proses_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('proses_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-                Alur registrasi yang transparan dan terdokumentasi rapi, mulai dari registrasi akun hingga penyerahan sertifikat fisik.
+                {t('proses_desc')}
               </p>
             </div>
 
@@ -1005,10 +1228,10 @@ export default function App() {
           {/* REGULASI SECTION */}
           <section id="regulasi-section" className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center md:text-left space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Payung Hukum</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">Undang-Undang & Regulasi Halal</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('regulasi_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('regulasi_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-                Setiap proses pengujian produk di LPH Al-Ghazali berpijak pada landasan regulasi perundang-undangan Negara Kesatuan Republik Indonesia.
+                {t('regulasi_desc')}
               </p>
             </div>
 
@@ -1042,10 +1265,10 @@ export default function App() {
           {/* BERITA SECTION */}
           <section id="berita-section" className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center md:text-left space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Berita Terkini</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">Kabar & Pengumuman LPH Al-Ghazali</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('berita_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('berita_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-                Pantau artikel, wawasan sertifikasi, serta agenda workshop jaminan mutu produk halal bersama instansi daerah Kabupaten Cilacap.
+                {t('berita_desc')}
               </p>
             </div>
 
@@ -1087,10 +1310,10 @@ export default function App() {
           {/* FAQ SECTION */}
           <section id="faq-section" className="max-w-4xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Tanya Jawab</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight text-center">Pertanyaan yang Sering Diajukan</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('faq_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight text-center">{t('faq_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 text-center max-w-xl mx-auto font-sans">
-                Temukan informasi mendalam seputar durasi, syarat wajib halal, penentuan biaya, masa berlaku ketetapan syariah, hingga otentikasi data 2FA.
+                {t('faq_desc')}
               </p>
             </div>
 
@@ -1143,10 +1366,10 @@ export default function App() {
           {/* KONTAK SECTION */}
           <section id="kontak-section" className="max-w-7xl mx-auto px-4 md:px-6 space-y-8 text-left py-4 pt-10">
             <div className="text-center md:text-left space-y-2">
-              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">Hubungi Kami</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">Hubungi Pusat Layanan Halal Cilacap</h2>
+              <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('kontak_sub')}</span>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('kontak_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
-                Ajukan pertanyaan, konsultasikan kendala berkas, atau bicarakan kebutuhan sertifikasi langsung dengan admin jaminan halal kami.
+                {t('kontak_desc')}
               </p>
             </div>
 
@@ -1982,6 +2205,24 @@ export default function App() {
           </p>
         </div>
       </footer>
+
+      {langToast && (
+        <div className="fixed bottom-6 right-6 z-50 bg-slate-900 border border-emerald-500/30 text-white p-4 rounded-2xl shadow-xl max-w-sm animate-in fade-in slide-in-from-bottom-5 duration-350 flex items-start gap-2.5">
+          <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-400 flex items-center justify-center shrink-0">
+            <Languages className="w-4 h-4" />
+          </div>
+          <div className="text-left space-y-0.5">
+            <h5 className="text-xs font-black text-amber-400">{langToast.title}</h5>
+            <p className="text-[11px] text-slate-350 leading-relaxed font-sans">{langToast.message}</p>
+          </div>
+          <button 
+            onClick={() => setLangToast(null)}
+            className="text-slate-400 hover:text-white transition-colors cursor-pointer p-0.5"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
     </div>
   );
