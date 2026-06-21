@@ -2405,11 +2405,11 @@ export default function App() {
               <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-xs">
                 AG
               </div>
-              <span className="font-extrabold font-display tracking-tight text-white">LPH Al-Ghazali</span>
-            </div>
-            <p className="leading-relaxed text-slate-400">
-              Portal Layanan LPH Al-Ghazali merupakan platform terpadu untuk mempermudah pendaftaran dan proses sertifikasi halal bagi para pelaku usaha di seluruh Indonesia.
-            </p>
+              <span className="font-extrabold font-display tracking-tight text-white">{dataLPH?.profile?.name || "LPH Al-Ghazali"}</span>
+          </div>
+          <p className="leading-relaxed text-slate-400">
+            {dataLPH?.profile?.heroDesc ? `Portal Layanan ${dataLPH.profile.name} merupakan platform terpadu untuk mempermudah pendaftaran dan proses sertifikasi halal bagi para pelaku usaha.` : "Portal Layanan LPH Al-Ghazali merupakan platform terpadu untuk mempermudah pendaftaran dan proses sertifikasi halal bagi para pelaku usaha di seluruh Indonesia."}
+          </p>
           </div>
 
           <div className="space-y-3">
@@ -2516,7 +2516,7 @@ export default function App() {
         </div>
 
         <div className="max-w-7xl mx-auto px-4 md:px-6 border-t border-slate-800 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-500">
-          <p>© 2026 LPH Al-Ghazali Cilacap. All rights reserved.</p>
+          <p>© 2026 {dataLPH?.profile?.name || "LPH Al-Ghazali Cilacap"}. All rights reserved.</p>
           <p className="flex items-center gap-1 mt-2 sm:mt-0">
             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
             <span>Sertifikat Halal dengan Proteksi Keamanan 2FA & E-Signature Terdaftar</span>
