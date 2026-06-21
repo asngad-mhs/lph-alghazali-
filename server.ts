@@ -65,7 +65,7 @@ async function startServer() {
         break; // Stop loop on success
       } catch (err: any) {
         lastError = err.message || String(err);
-        console.warn(`Proxy branch to ${url} failed/offline:`, lastError);
+        console.log(`[Sync Info] Remote branch ${url} not reachable. Detail: ${lastError}`);
       }
     }
 
@@ -174,7 +174,7 @@ async function startServer() {
         break;
       } catch (err: any) {
         lastError = err.message || String(err);
-        console.warn(`Proxy branch to ${url} failed/offline:`, lastError);
+        console.log(`[Contact Sync] Remote route ${url} did not respond: ${lastError}`);
       }
     }
 
