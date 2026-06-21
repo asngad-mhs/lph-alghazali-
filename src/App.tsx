@@ -13,7 +13,7 @@ import CertificationWizard from './components/CertificationWizard';
 import CertificatePrinter from './components/CertificatePrinter';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import NotificationSimulator from './components/NotificationSimulator';
-const lphLogo = '/logo-lph-al-ghazali-1.png';
+import lphLogo from './assets/images/logo-lph-al-ghazali-1.png';
 
 // Default initial mock database records
 const INITIAL_APPLICATIONS: HalalApplication[] = [
