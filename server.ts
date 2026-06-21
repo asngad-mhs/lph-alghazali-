@@ -23,37 +23,56 @@ async function startServer() {
 
   // CORS-bypassing proxy query to pull latest data from the target Management System
   app.get("/api/lph-data", async (req, res) => {
-    try {
-      console.log("Fetching live LPH data through proxy server...");
-      // Fetch with timeout to prevent blocking
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6000);
+    // Cascading URLs to try: Production first (always accessible publicly), then Development (may require dev session)
+    const urls = [
+      "https://ais-pre-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all",
+      "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all"
+    ];
 
-      const response = await fetch("https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all", {
-        signal: controller.signal,
-        headers: {
-          'Accept': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) LphPortalClient/1.0'
+    let success = false;
+    let payloadData = null;
+    let lastError = null;
+
+    for (const url of urls) {
+      try {
+        console.log(`Proxy server fetching live LPH data from remote database: ${url}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+
+        const response = await fetch(url, {
+          signal: controller.signal,
+          headers: {
+            'Accept': 'application/json',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) LphPortalClient/1.0'
+          }
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP status ${response.status}`);
         }
-      });
-      clearTimeout(timeoutId);
 
-      if (!response.ok) {
-        throw new Error(`External source responded with HTTP status ${response.status}`);
+        const contentType = response.headers.get("content-type") || "";
+        const responseText = await response.text();
+
+        if (!contentType.includes("application/json") && !responseText.trim().startsWith("{")) {
+          throw new Error("HTML/non-JSON content returned.");
+        }
+
+        payloadData = JSON.parse(responseText);
+        console.log(`Successfully fetched live LPH data from: ${url}`);
+        success = true;
+        break; // Stop loop on success
+      } catch (err: any) {
+        lastError = err.message || String(err);
+        console.warn(`Proxy branch to ${url} failed/offline:`, lastError);
       }
+    }
 
-      const contentType = response.headers.get("content-type") || "";
-      const responseText = await response.text();
-
-      if (!contentType.includes("application/json") && !responseText.trim().startsWith("{")) {
-        throw new Error("Remote service returned HTML/non-JSON content. This is expected if the target management system is offline or in maintenance mode.");
-      }
-
-      const payload = JSON.parse(responseText);
-      console.log("Successfully fetched live LPH data from remote API status:", payload.status);
-      res.json(payload);
-    } catch (err: any) {
-      console.log("Infra status: Target Management System API offline or inaccessible. Serving high-fidelity local cache. Detail:", err.message || String(err));
+    if (success && payloadData) {
+      res.json(payloadData);
+    } else {
+      console.log("Infra status: All target Management System API endpoints offline or inaccessible. Serving high-fidelity local cache. Detail:", lastError);
       // Graceful fallback response structure with standard high-fidelity data matching our application
       res.json({
         status: "success",
@@ -109,41 +128,60 @@ async function startServer() {
 
   // Proxy endpoint to send contact message to the Management System CRUD database
   app.post("/api/lph-contact", async (req, res) => {
-    try {
-      console.log("Proxying contact submit message details:", req.body);
-      const { nama, email, subyek, pesan } = req.body;
+    // Cascading URLs to try: Production first, then Development
+    const urls = [
+      "https://ais-pre-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak",
+      "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak"
+    ];
 
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 6500);
+    const { nama, email, subyek, pesan } = req.body;
+    let success = false;
+    let payloadData = null;
+    let lastError = null;
 
-      const response = await fetch("https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak", {
-        method: "POST",
-        signal: controller.signal,
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) LphPortalClient/1.0'
-        },
-        body: JSON.stringify({ nama, email, subyek, pesan })
-      });
-      clearTimeout(timeoutId);
+    for (const url of urls) {
+      try {
+        console.log(`Proxy server submitting contact message to remote database: ${url}`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6500);
 
-      if (!response.ok) {
-        throw new Error(`External kontak API status ${response.status}`);
+        const response = await fetch(url, {
+          method: "POST",
+          signal: controller.signal,
+          headers: {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) LphPortalClient/1.0'
+          },
+          body: JSON.stringify({ nama, email, subyek, pesan })
+        });
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          throw new Error(`HTTP status ${response.status}`);
+        }
+
+        const contentType = response.headers.get("content-type") || "";
+        const responseText = await response.text();
+
+        if (!contentType.includes("application/json") && !responseText.trim().startsWith("{")) {
+          throw new Error("HTML/non-JSON content returned.");
+        }
+
+        payloadData = JSON.parse(responseText);
+        console.log(`Successfully stored message in remote database via ${url}. status:`, payloadData.status);
+        success = true;
+        break;
+      } catch (err: any) {
+        lastError = err.message || String(err);
+        console.warn(`Proxy branch to ${url} failed/offline:`, lastError);
       }
+    }
 
-      const contentType = response.headers.get("content-type") || "";
-      const responseText = await response.text();
-
-      if (!contentType.includes("application/json") && !responseText.trim().startsWith("{")) {
-        throw new Error("Remote kontak service returned html/non-JSON content.");
-      }
-
-      const payload = JSON.parse(responseText);
-      console.log("Successfully stored message in remote database. Result status:", payload.status);
-      res.json(payload);
-    } catch (err: any) {
-      console.log("Infra status: Target kontak database offline. Processing using fallback system. Detail:", err.message || String(err));
+    if (success && payloadData) {
+      res.json(payloadData);
+    } else {
+      console.log("Infra status: Target kontak database offline. Processing using fallback system. Detail:", lastError);
       // Local fallback success simulator
       res.json({
         status: "success",

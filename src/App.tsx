@@ -379,8 +379,10 @@ export default function App() {
     // List of candidate endpoints to try in sequence to ensure sync works on Local, Live Cloud Run, and External Static Hosting (Cloudflare Pages, etc.)
     const endpoints = [
       "/api/lph-data", // 1. Relative path (Runs on development container / live Cloud Run deployment)
-      "https://ais-dev-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-data", // 2. Absolute Cloud Run app proxy URL (Bypasses CORS for external static hostings like Pages)
-      "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all" // 3. Direct central system API
+      "https://ais-pre-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-data", // 2. Public Production Cloud Run app proxy URL (Highly reliable, bypasses CORS for external static hosts)
+      "https://ais-pre-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all", // 3. Public Production Central Management System directly (Prod URL, highly available)
+      "https://ais-dev-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-data", // 4. Dev proxy (For local active developer workspace in AI Studio)
+      "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/all" // 5. Dev direct central system API
     ];
 
     let success = false;
@@ -614,8 +616,10 @@ export default function App() {
     // Try endpoints in cascade to handle local development, Cloud Run production, and external static hostings
     const endpoints = [
       { url: "/api/lph-contact", isJson: true }, // 1. Relative path (Runs on development container / live Cloud Run deployment)
-      { url: "https://ais-dev-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-contact", isJson: true }, // 2. Absolute Cloud Run app proxy URL (Bypasses CORS for external static hostings like Pages)
-      { url: "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak", isJson: true } // 3. Direct central database system
+      { url: "https://ais-pre-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-contact", isJson: true }, // 2. Public Production Cloud Run app proxy URL (Bypasses CORS for external static hostings like Pages)
+      { url: "https://ais-pre-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak", isJson: true }, // 3. Public Production Central management database system directly (Prod URL, highly available)
+      { url: "https://ais-dev-ofl67t3pcqguo45eeenqjy-268553462022.asia-east1.run.app/api/lph-contact", isJson: true }, // 4. Dev proxy (For local AI Studio preview)
+      { url: "https://ais-dev-txhph64ydhwu7gjjpfx3ed-268553462022.asia-east1.run.app/api/v1/kontak", isJson: true } // 5. Dev direct central database system
     ];
 
     let success = false;
