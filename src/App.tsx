@@ -321,12 +321,38 @@ export default function App() {
     name?: string;
     description?: string;
     address?: string;
+    whatsapp?: string;
+    email?: string;
+    heroTitle1?: string;
+    heroTitle2?: string;
+    heroDesc?: string;
+    aboutTitle?: string;
+    aboutDesc?: string;
+  }
+
+  interface RegulasiItem {
+    law: string;
+    title: string;
+    desc: string;
+  }
+
+  interface NavbarItem {
+    label: string;
+    id: string;
+  }
+
+  interface FaqItem {
+    q: string;
+    a: string;
   }
 
   const [dataLPH, setDataLPH] = useState<{
     profile?: ProfileItem;
     layanan?: LayananItem[];
     berita?: BeritaItem[];
+    regulasi?: RegulasiItem[];
+    navbar?: NavbarItem[];
+    faq?: FaqItem[];
   } | null>(null);
   const [lphSyncStatus, setLphSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'failed'>('idle');
   const [lphSyncError, setLphSyncError] = useState<string | null>(null);
@@ -343,6 +369,74 @@ export default function App() {
   // Global Directories Search state
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState(GLOBAL_HALAL_DIRECTORY);
+
+  // Helper functions to resolve dynamic contents from synchronized CRUD Management system
+  const getNavbarItems = () => {
+    if (dataLPH?.navbar && dataLPH.navbar.length > 0) {
+      return dataLPH.navbar;
+    }
+    return [
+      { label: t('beranda'), id: 'beranda-section' },
+      { label: t('profile'), id: 'tentang-section' },
+      { label: t('layanan'), id: 'layanan-section' },
+      { label: t('proses'), id: 'proses-section' },
+      { label: t('regulasi'), id: 'regulasi-section' },
+      { label: t('berita'), id: 'berita-section' },
+      { label: t('faq'), id: 'faq-section' },
+      { label: t('kontak'), id: 'kontak-section' }
+    ];
+  };
+
+  const getRegulasiItems = () => {
+    if (dataLPH?.regulasi && dataLPH.regulasi.length > 0) {
+      return dataLPH.regulasi;
+    }
+    return [
+      {
+        law: 'UU No. 33 Tahun 2014',
+        title: 'Jaminan Produk Halal',
+        desc: 'Mandat konstitusi bahwa seluruh produk makanan, minuman, kosmetika, obat, serta bahan kimia wajib memiliki sertifikat kehalalan secara merata.'
+      },
+      {
+        law: 'PP No. 39 Tahun 2021',
+        title: 'Penyelenggaraan JPH',
+        desc: 'Peraturan Pemerintah yang mengatur alur teknis, batas waktu sertifikasi reguler, koordinasi antara BPJPH, LPH, dan MUI selaku pemutus fatwa halal.'
+      },
+      {
+        law: 'Kementerian Agama RI',
+        title: 'Wajib Halal Tahap I',
+        desc: 'Ketentuan batas akhir (deadline) wajib halal bagi seluruh pelaku usaha sektor makanan, jasa penyembelihan, dan minuman olahan komersial.'
+      }
+    ];
+  };
+
+  const getFaqItems = () => {
+    if (dataLPH?.faq && dataLPH.faq.length > 0) {
+      return dataLPH.faq;
+    }
+    return [
+      {
+        q: 'Bagaimana prosedur mendaftarkan sertifikasi halal di LPH Al-Ghazali?',
+        a: 'Pendaftaran dilakukan melalui akun SIHALAL di sihalal.kemenag.go.id. Saat memilih Lembaga Pemeriksa Halal, ketik LPH Al-Ghazali (Nomor Registrasi 32). Setelah itu, data akan terintegrasi otomatis ke sistem kami untuk tahapan audit dokumen bahan.'
+      },
+      {
+        q: 'Berapakah waktu pengerjaan proses sertifikasi halal reguler?',
+        a: 'Keunggulan LPH Al-Ghazali terletak pada komitmen kecepatan layanan. Rata-rata proses audit dokumen awal hingga verifikasi kunjungan lapangan rampung dalam estimasi waktu kurang dari 14 hari kerja.'
+      },
+      {
+        q: 'Berapa lama masa berlaku dari Sertifikat Halal BPJPH?',
+        a: 'Berdasarkan regulasi resmi Undang-Undang Jaminan Produk Halal terbaru, masa berlaku Sertifikat Halal adalah berlaku selamanya tanpa batas kedaluwarsa, sepanjang pelaku usaha tidak mengubah komposisi bahan baku atau alur produksinya.'
+      },
+      {
+        q: 'Mengapa akun Pelaku Usaha diwajibkan menggunakan Autentikasi Dua Faktor (2FA)?',
+        a: 'LPH Al-Ghazali berkomitmen menetapkan keamanan tingkat tertinggi (security obedience). 2FA menggunakan Google Authenticator atau kode TOTP melindungi rahasia formulasi bahan pangan dari risiko kebocoran data digital serta menghindari pemalsuan tanda tangan audit.'
+      },
+      {
+        q: 'Apakah bisa mendaftarkan produk dengan skala bahan yang rumit?',
+        a: 'Tentu. Auditor internal kami teruji memverifikasi produk berstruktur bahan rumit atau rantai pasok impor. Jika dibutuhkan pengujian ilmiah biologis, sampel bahan akan divalidasi ke laboratorium terakreditasi mitra LPH Al-Ghazali.'
+      }
+    ];
+  };
 
   // Sync state to LocalStorage
   useEffect(() => {
@@ -907,23 +1001,14 @@ export default function App() {
               <span>AG</span>
             </div>
             <div className="text-left leading-tight hidden sm:block">
-              <div className="text-xs uppercase tracking-widest font-extrabold text-emerald-700 dark:text-emerald-400">LPH Al-Ghazali</div>
+              <div className="text-xs uppercase tracking-widest font-extrabold text-emerald-700 dark:text-emerald-400">{dataLPH?.profile?.name || "LPH Al-Ghazali"}</div>
               <div className="text-[10px] text-slate-450 dark:text-slate-400 font-medium">Sertifikasi Halal Berintegritas</div>
             </div>
           </div>
 
           {/* Navigation Links */}
           <nav className="hidden lg:flex gap-5 text-xs font-bold text-slate-600 dark:text-slate-350">
-            {[
-              { label: t('beranda'), id: 'beranda-section' },
-              { label: t('profile'), id: 'tentang-section' },
-              { label: t('layanan'), id: 'layanan-section' },
-              { label: t('proses'), id: 'proses-section' },
-              { label: t('regulasi'), id: 'regulasi-section' },
-              { label: t('berita'), id: 'berita-section' },
-              { label: t('faq'), id: 'faq-section' },
-              { label: t('kontak'), id: 'kontak-section' }
-            ].map((item) => (
+            {getNavbarItems().map((item) => (
               <button 
                 key={item.id}
                 onClick={() => handleScrollToLandingSection(item.id)}
@@ -1056,16 +1141,7 @@ export default function App() {
       {isMobileMenuOpen && (
         <div className="lg:hidden sticky top-16 z-40 bg-white dark:bg-slate-900 border-b border-slate-100 dark:border-slate-800 animate-in slide-in-from-top duration-200 shadow-md">
           <nav className="flex flex-col p-4 space-y-3 font-bold text-left text-slate-600 dark:text-slate-350">
-            {[
-              { label: t('beranda'), id: 'beranda-section' },
-              { label: t('profile'), id: 'tentang-section' },
-              { label: t('layanan'), id: 'layanan-section' },
-              { label: t('proses'), id: 'proses-section' },
-              { label: t('regulasi'), id: 'regulasi-section' },
-              { label: t('berita'), id: 'berita-section' },
-              { label: t('faq'), id: 'faq-section' },
-              { label: t('kontak'), id: 'kontak-section' }
-            ].map((item) => (
+            {getNavbarItems().map((item) => (
               <button 
                 key={item.id}
                 onClick={() => handleScrollToLandingSection(item.id)}
@@ -1198,12 +1274,12 @@ export default function App() {
                 </div>
 
                 <h1 className="text-3xl md:text-5xl font-extrabold font-display tracking-tight leading-tight">
-                  <span className="text-white">{t('herotitle1')}</span> <br />
-                  <span className="text-amber-400">{t('herotitle2')}</span>
+                  <span className="text-white">{dataLPH?.profile?.heroTitle1 || t('herotitle1')}</span> <br />
+                  <span className="text-amber-400">{dataLPH?.profile?.heroTitle2 || t('herotitle2')}</span>
                 </h1>
 
                 <p className="text-sm md:text-base text-emerald-100 leading-relaxed max-w-xl">
-                  {t('herodesc')}
+                  {dataLPH?.profile?.heroDesc || t('herodesc')}
                 </p>
 
                 <div className="flex flex-wrap gap-4 pt-2">
@@ -1283,9 +1359,9 @@ export default function App() {
           <section id="tentang-section" className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 text-left">
             <div className="lg:col-span-5 space-y-4">
               <span className="text-[10px] uppercase font-bold tracking-widest text-emerald-600 dark:text-emerald-400 px-2.5 py-1 bg-emerald-500/10 rounded-md">{t('profile_sub')}</span>
-              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{t('profile_title')}</h2>
+              <h2 className="text-2xl md:text-3xl font-extrabold font-display leading-tight">{dataLPH?.profile?.aboutTitle || t('profile_title')}</h2>
               <p className="text-xs md:text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
-                {t('profile_desc')}
+                {dataLPH?.profile?.aboutDesc || t('profile_desc')}
               </p>
               <div className="space-y-2 text-xs text-slate-500 dark:text-slate-400">
                 <div className="flex items-center gap-2.5">
@@ -1487,23 +1563,7 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  law: 'UU No. 33 Tahun 2014',
-                  title: 'Jaminan Produk Halal',
-                  desc: 'Mandat konstitusi bahwa seluruh produk makanan, minuman, kosmetika, obat, serta bahan kimia wajib memiliki sertifikat kehalalan secara merata.'
-                },
-                {
-                  law: 'PP No. 39 Tahun 2021',
-                  title: 'Penyelenggaraan JPH',
-                  desc: 'Peraturan Pemerintah yang mengatur alur teknis, batas waktu sertifikasi reguler, koordinasi antara BPJPH, LPH, dan MUI selaku pemutus fatwa halal.'
-                },
-                {
-                  law: 'Kementerian Agama RI',
-                  title: 'Wajib Halal Tahap I',
-                  desc: 'Ketentuan batas akhir (deadline) wajib halal bagi seluruh pelaku usaha sektor makanan, jasa penyembelihan, dan minuman olahan komersial.'
-                }
-              ].map((reg, idx) => (
+              {getRegulasiItems().map((reg, idx) => (
                 <div key={idx} className="bg-slate-100/60 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl text-left space-y-3">
                   <span className="font-mono text-xs font-bold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 px-2.5 py-1 rounded-md">{reg.law}</span>
                   <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mt-2">{reg.title}</h3>
@@ -1569,28 +1629,7 @@ export default function App() {
             </div>
 
             <div className="space-y-4">
-              {[
-                {
-                  q: 'Bagaimana prosedur mendaftarkan sertifikasi halal di LPH Al-Ghazali?',
-                  a: 'Pendaftaran dilakukan melalui akun SIHALAL di sihalal.kemenag.go.id. Saat memilih Lembaga Pemeriksa Halal, ketik LPH Al-Ghazali (Nomor Registrasi 32). Setelah itu, data akan terintegrasi otomatis ke sistem kami untuk tahapan audit dokumen bahan.'
-                },
-                {
-                  q: 'Berapakah waktu pengerjaan proses sertifikasi halal reguler?',
-                  a: 'Keunggulan LPH Al-Ghazali terletak pada komitmen kecepatan layanan. Rata-rata proses audit dokumen awal hingga verifikasi kunjungan lapangan rampung dalam estimasi waktu kurang dari 14 hari kerja.'
-                },
-                {
-                  q: 'Berapa lama masa berlaku dari Sertifikat Halal BPJPH?',
-                  a: 'Berdasarkan regulasi resmi Undang-Undang Jaminan Produk Halal terbaru, masa berlaku Sertifikat Halal adalah berlaku selamanya tanpa batas kedaluwarsa, sepanjang pelaku usaha tidak mengubah komposisi bahan baku atau alur produksinya.'
-                },
-                {
-                  q: 'Mengapa akun Pelaku Usaha diwajibkan menggunakan Autentikasi Dua Faktor (2FA)?',
-                  a: 'LPH Al-Ghazali berkomitmen menetapkan keamanan tingkat tertinggi (security obedience). 2FA menggunakan Google Authenticator atau kode TOTP melindungi rahasia formulasi bahan pangan dari risiko kebocoran data digital serta menghindari pemalsuan tanda tangan audit.'
-                },
-                {
-                  q: 'Apakah bisa mendaftarkan produk dengan skala bahan yang rumit?',
-                  a: 'Tentu. Auditor internal kami teruji memverifikasi produk berstruktur bahan rumit atau rantai pasok impor. Jika dibutuhkan pengujian ilmiah biologis, sampel bahan akan divalidasi ke laboratorium terakreditasi mitra LPH Al-Ghazali.'
-                }
-              ].map((faq, idx) => {
+              {getFaqItems().map((faq, idx) => {
                 const isOpen = openFaq === idx;
                 return (
                   <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden transition-all duration-300">
@@ -1637,15 +1676,15 @@ export default function App() {
                   <div className="space-y-3 pt-2 text-xs">
                     <div className="flex items-start gap-3">
                       <span className="font-bold text-amber-400 shrink-0">Lokasi:</span>
-                      <span className="text-emerald-100">Jl. Raya Al-Ghazali No. 32, Cilacap, Jawa Tengah</span>
+                      <span className="text-emerald-100">{dataLPH?.profile?.address || "Jl. Raya Al-Ghazali No. 32, Cilacap, Jawa Tengah"}</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="font-bold text-amber-400 shrink-0">WhatsApp:</span>
-                      <span className="text-emerald-100">+62 812-3456-7890</span>
+                      <span className="text-emerald-100">{dataLPH?.profile?.whatsapp || "+62 812-3456-7890"}</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <span className="font-bold text-amber-400 shrink-0">Email:</span>
-                      <span className="text-emerald-100 font-sans">info@lph-alghazali.or.id</span>
+                      <span className="text-emerald-100 font-sans">{dataLPH?.profile?.email || "info@lph-alghazali.or.id"}</span>
                     </div>
                   </div>
                 </div>
