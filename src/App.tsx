@@ -13,7 +13,7 @@ import CertificationWizard from './components/CertificationWizard';
 import CertificatePrinter from './components/CertificatePrinter';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import NotificationSimulator from './components/NotificationSimulator';
-const lphLogo = '/WhatsApp%20Image%202026-05-23%20at%2002.29.05%20(1).png';
+const lphLogo = '/logo-lph.png';
 
 // Default initial mock database records
 const INITIAL_APPLICATIONS: HalalApplication[] = [
