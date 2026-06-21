@@ -13,6 +13,7 @@ import CertificationWizard from './components/CertificationWizard';
 import CertificatePrinter from './components/CertificatePrinter';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import NotificationSimulator from './components/NotificationSimulator';
+const lphLogo = '/src/assets/images/lph_alghazali_logo_1782040107287.jpg';
 
 // Default initial mock database records
 const INITIAL_APPLICATIONS: HalalApplication[] = [
@@ -997,8 +998,13 @@ export default function App() {
           
           {/* Logo & Identity */}
           <div className="flex items-center gap-3 cursor-pointer" onClick={() => handleScrollToLandingSection('beranda-section')}>
-            <div className="w-10 h-10 bg-gradient-to-tr from-emerald-700 to-emerald-500 rounded-xl flex items-center justify-center text-white border border-emerald-400 shadow-sm font-black transition-transform hover:scale-105">
-              <span>AG</span>
+            <div className="w-10 h-10 rounded-xl flex items-center justify-center overflow-hidden border border-slate-200 dark:border-slate-700 bg-white shadow-xs transition-transform hover:scale-105 shrink-0">
+              <img 
+                src={lphLogo} 
+                alt="LPH Al-Ghazali Logo" 
+                className="w-full h-full object-cover"
+                referrerPolicy="no-referrer"
+              />
             </div>
             <div className="text-left leading-tight hidden sm:block">
               <div className="text-xs uppercase tracking-widest font-extrabold text-emerald-700 dark:text-emerald-400">{dataLPH?.profile?.name || "LPH Al-Ghazali"}</div>
@@ -2402,11 +2408,16 @@ export default function App() {
           
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-emerald-600 flex items-center justify-center font-bold text-white text-xs">
-                AG
+              <div className="w-8 h-8 rounded-lg overflow-hidden border border-slate-700 bg-white flex items-center justify-center shrink-0">
+                <img 
+                  src={lphLogo} 
+                  alt="LPH Al-Ghazali Logo" 
+                  className="w-full h-full object-cover"
+                  referrerPolicy="no-referrer"
+                />
               </div>
               <span className="font-extrabold font-display tracking-tight text-white">{dataLPH?.profile?.name || "LPH Al-Ghazali"}</span>
-          </div>
+            </div>
           <p className="leading-relaxed text-slate-400">
             {dataLPH?.profile?.heroDesc ? `Portal Layanan ${dataLPH.profile.name} merupakan platform terpadu untuk mempermudah pendaftaran dan proses sertifikasi halal bagi para pelaku usaha.` : "Portal Layanan LPH Al-Ghazali merupakan platform terpadu untuk mempermudah pendaftaran dan proses sertifikasi halal bagi para pelaku usaha di seluruh Indonesia."}
           </p>
