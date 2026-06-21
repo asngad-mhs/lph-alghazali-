@@ -9,6 +9,18 @@ async function startServer() {
   // Middleware to parse incoming JSON request body
   app.use(express.json());
 
+  // CORS middleware to support static deployments (e.g. lph-ghazali-1.pages.dev) querying this proxy
+  app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, Accept");
+    if (req.method === "OPTIONS") {
+      res.sendStatus(200);
+      return;
+    }
+    next();
+  });
+
   // CORS-bypassing proxy query to pull latest data from the target Management System
   app.get("/api/lph-data", async (req, res) => {
     try {
