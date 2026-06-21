@@ -4,7 +4,7 @@ import {
   Moon, Sun, Activity, ClipboardList, Plus, FileSpreadsheet, FileText, 
   CheckCircle, Clock, AlertTriangle, Play, HelpCircle, FileSignature, 
   Send, Smartphone, Mail, Users, CheckCircle2, ChevronRight, Sparkles,
-  PenTool, Printer, Languages, Globe
+  PenTool, Printer, Languages, Globe, RefreshCw, Database
 } from 'lucide-react';
 
 import { HalalApplication, UserAccount, SystemNotification, ProductType } from './types';
@@ -299,6 +299,42 @@ export default function App() {
   const t = (key: keyof typeof TRANSLATIONS.id) => {
     return TRANSLATIONS[currentLang][key] || TRANSLATIONS.id[key];
   };
+
+  // Dynamic LPH Management data synchronization states
+  interface LayananItem {
+    id?: string;
+    title: string;
+    desc: string;
+    bg?: string;
+    fee?: string | number;
+  }
+
+  interface BeritaItem {
+    date?: string;
+    title: string;
+    desc: string;
+    image?: string;
+    url?: string;
+  }
+
+  interface ProfileItem {
+    name?: string;
+    description?: string;
+    address?: string;
+  }
+
+  const [dataLPH, setDataLPH] = useState<{
+    profile?: ProfileItem;
+    layanan?: LayananItem[];
+    berita?: BeritaItem[];
+  } | null>(null);
+  const [lphSyncStatus, setLphSyncStatus] = useState<'idle' | 'syncing' | 'synced' | 'failed'>('idle');
+  const [lphSyncError, setLphSyncError] = useState<string | null>(null);
+
+  // States for live-tracking contact message submission
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactStatus, setContactStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [contactMessage, setContactMessage] = useState('');
   
   // Modals / wizards
   const [wizardOpen, setWizardOpen] = useState(false);
@@ -334,6 +370,33 @@ export default function App() {
       return () => clearTimeout(timer);
     }
   }, [langToast]);
+
+  // Function to pull latest data from the Management System API
+  const fetchLphAllData = async () => {
+    setLphSyncStatus('syncing');
+    setLphSyncError(null);
+    try {
+      // Fetch via custom server proxy to bypass browser-level CORS, with dynamic offline fallback capability
+      const response = await fetch("/api/lph-data");
+      const payload = await response.json();
+      if (payload.status === "success" && payload.data) {
+        setDataLPH(payload.data);
+        setLphSyncStatus('synced');
+        console.log("Nama LPH Terupdate:", payload.data?.profile?.name);
+      } else {
+        throw new Error(payload.message || "Respons status bukan success");
+      }
+    } catch (err: any) {
+      console.warn("Sinkronisasi data LPH beralih ke luring:", err);
+      setLphSyncStatus('failed');
+      setLphSyncError(err?.message || String(err));
+    }
+  };
+
+  // Initial mount trigger
+  useEffect(() => {
+    fetchLphAllData();
+  }, []);
 
   // Dark Mode side effects
   useEffect(() => {
@@ -484,6 +547,53 @@ export default function App() {
   };
 
   // Logout handler
+  // Contact Form Submission with backend integration & custom proxy routing
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setContactSubmitting(true);
+    setContactStatus('idle');
+    setContactMessage('');
+
+    const target = e.currentTarget;
+    const formData = new FormData(target);
+    const nama = formData.get('nama') as string;
+    const email = formData.get('email') as string;
+    const subyek = formData.get('subyek') as string;
+    const pesan = formData.get('pesan') as string;
+
+    try {
+      const response = await fetch("/api/lph-contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nama,
+          email,
+          subyek,
+          pesan
+        })
+      });
+      
+      const payload = await response.json();
+      if (payload.status === "success") {
+        setContactStatus('success');
+        setContactMessage(payload.message || "Pesan Anda berhasil diteruskan dan disimpan di inbox admin!");
+        alert("Pesan Anda berhasil diteruskan dan disimpan di inbox admin!");
+        target.reset();
+      } else {
+        throw new Error(payload.message || "Gagal mengirim pesan kontak.");
+      }
+    } catch (error: any) {
+      console.error("Gagal sinkron kirim kontak:", error);
+      setContactStatus('error');
+      setContactMessage(error.message || "Gagal sinkron data LPH kontak.");
+      alert("Gagal mengirim pesan: " + (error.message || "Koneksi terputus"));
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
+
   const handleLogout = () => {
     setCurrentUser(null);
     setActiveTab('landing');
@@ -785,6 +895,31 @@ export default function App() {
                 <span className="text-md leading-none select-none filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.15)]">🇸🇦</span>
               </button>
             </div>
+
+            {/* Live Sync Status Widget */}
+            <button
+              onClick={fetchLphAllData}
+              disabled={lphSyncStatus === 'syncing'}
+              className={`p-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer text-xs font-bold border ${
+                lphSyncStatus === 'synced'
+                  ? 'bg-emerald-500/10 hover:bg-emerald-500/15 border-emerald-500/30 text-emerald-700 dark:text-emerald-400'
+                  : lphSyncStatus === 'syncing'
+                  ? 'bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400'
+                  : 'bg-rose-500/10 hover:bg-rose-500/15 border-rose-500/30 text-rose-600 dark:text-rose-450'
+              }`}
+              title={
+                lphSyncStatus === 'synced'
+                  ? "Terkoneksi ke Management System (Sinkron)"
+                  : lphSyncStatus === 'syncing'
+                  ? "Menghubungkan & Mensinkronisasikan Data..."
+                  : `Gagal Sinkronisasi: ${lphSyncError || 'Klik untuk coba lagi'}`
+              }
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${lphSyncStatus === 'syncing' ? 'animate-spin' : ''}`} />
+              <span className="hidden md:inline text-[9px] tracking-wide uppercase font-black font-sans">
+                {lphSyncStatus === 'synced' ? 'Live Synced' : lphSyncStatus === 'syncing' ? 'Syncing...' : 'Local State'}
+              </span>
+            </button>
 
             {/* Dark Mode toggler */}
             <button 
@@ -1139,40 +1274,73 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {[
+              {(dataLPH?.layanan && dataLPH.layanan.length > 0 ? dataLPH.layanan : [
                 {
                   title: 'Sertifikasi Halal Reguler',
                   desc: 'Pemeriksaan kepatuhan halal komersial untuk produk olahan makanan, minuman, obat, kosmetik, serta barang gunaan dengan audit menyeluruh.',
                   bg: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400',
-                  icon: <ClipboardList className="w-6 h-6" />
+                  fee: 'Mulai Rp 300.000'
                 },
                 {
                   title: 'Pengujian Laboratorium',
                   desc: 'Analisa saintifik bahan pangan tingkat lanjut terhadap senyawa turunan non-halal bekerja sama dengan laboratorium ISO 17025.',
                   bg: 'bg-indigo-505 bg-indigo-500/10 text-indigo-600 dark:text-indigo-400',
-                  icon: <Activity className="w-6 h-6" />
+                  fee: 'Tarif Terstandar BI'
                 },
                 {
                   title: 'Pendampingan PPH',
                   desc: 'Pembinaan intensif bagi Pelaku Usaha Mikro & Kecil (UMKM) Cilacap untuk program halal mandiri (Self Declare).',
                   bg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-                  icon: <Users className="w-6 h-6" />
+                  fee: 'Gratis (Fasilitas Sehati)'
                 },
                 {
                   title: 'Sertifikasi Rumah Potong',
                   desc: 'Sertifikasi khusus Rumah Potong Hewan (RPH/RPU) untuk memastikan proses penyembelihan sesuai standar syariat Islam.',
                   bg: 'bg-rose-500/10 text-rose-600 dark:text-rose-450',
-                  icon: <CheckCircle className="w-6 h-6" />
+                  fee: 'Tarif Kompetitif'
                 }
-              ].map((layanan, idx) => (
-                <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs hover:border-emerald-500/30 transition-all">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${layanan.bg}`}>
-                    {layanan.icon}
+              ]).map((layanan, idx) => {
+                // Determine icon based on index or title keywords
+                let iconEl = <ClipboardList className="w-6 h-6" />;
+                const titleStr = (layanan.title || '').toLowerCase();
+                if (idx === 1 || titleStr.includes('lab') || titleStr.includes('uji') || titleStr.includes('laboratorium')) {
+                  iconEl = <Activity className="w-6 h-6" />;
+                } else if (idx === 2 || titleStr.includes('pph') || titleStr.includes('pendampingan') || titleStr.includes('umkm')) {
+                  iconEl = <Users className="w-6 h-6" />;
+                } else if (idx === 3 || titleStr.includes('potong') || titleStr.includes('rph') || titleStr.includes('hewan')) {
+                  iconEl = <CheckCircle className="w-6 h-6" />;
+                } else {
+                  iconEl = <Award className="w-6 h-6" />;
+                }
+
+                // Determine backgrounds
+                const bgStyles = layanan.bg || (
+                  idx === 0 ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' :
+                  idx === 1 ? 'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' :
+                  idx === 2 ? 'bg-amber-500/10 text-amber-600 dark:text-amber-400' :
+                  'bg-rose-500/10 text-rose-600 dark:text-rose-450'
+                );
+
+                return (
+                  <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 rounded-2xl shadow-xs hover:border-emerald-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${bgStyles}`}>
+                        {iconEl}
+                      </div>
+                      <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mb-2">{layanan.title}</h3>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed mb-4">{layanan.desc}</p>
+                    </div>
+                    {layanan.fee && (
+                      <div className="pt-2 border-t border-slate-100 dark:border-slate-800/60 mt-auto flex items-center justify-between">
+                        <span className="text-[10px] text-slate-400 uppercase tracking-widest font-extrabold">Tarif Layanan</span>
+                        <span className="text-xs font-black text-emerald-600 dark:text-emerald-400 bg-emerald-500/5 px-2 py-0.5 rounded-md">
+                          {typeof layanan.fee === 'number' ? `Rp ${layanan.fee.toLocaleString('id-ID')}` : layanan.fee}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                  <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm mb-2">{layanan.title}</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed">{layanan.desc}</p>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -1273,7 +1441,7 @@ export default function App() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
+              {(dataLPH?.berita && dataLPH.berita.length > 0 ? dataLPH.berita : [
                 {
                   date: '18 Juni 2026',
                   title: 'Ayo Sukseskan Sertifikasi Halal Gratis (SEHATI) Bagi 2.000 UMKM Cilacap',
@@ -1289,10 +1457,10 @@ export default function App() {
                   title: 'Penerapan API E-Signature Bersama BSrE BSSN Tingkatkan Keamanan Berkas Halal',
                   desc: 'Portal digital LPH Al-Ghazali kini resmi menerapkan sistem tanda tangan bersertifikasi elektronik guna melindungi keaslian berkas LHA dari pemalsuan data.'
                 }
-              ].map((berita, idx) => (
+              ]).map((berita, idx) => (
                 <div key={idx} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden hover:shadow-md transition-all flex flex-col justify-between">
                   <div className="p-5 space-y-3">
-                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{berita.date}</span>
+                    <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase">{berita.date || 'Edukasi Halal'}</span>
                     <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm leading-snug hover:text-emerald-600 dark:hover:text-emerald-400 cursor-pointer">{berita.title}</h3>
                     <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3">{berita.desc}</p>
                   </div>
@@ -1414,18 +1582,29 @@ export default function App() {
               {/* Right Column: Contact form */}
               <div className="lg:col-span-7 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 md:p-8 rounded-3xl text-left shadow-xs">
                 <form 
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    alert('Terima kasih! Pesan dan permohonan konsultasi Anda berhasil terkirim. Admin LPH Al-Ghazali akan segera menghubungi Anda.');
-                    (e.target as HTMLFormElement).reset();
-                  }}
+                  onSubmit={handleContactSubmit}
                   className="space-y-4"
                 >
+                  {contactStatus === 'success' && (
+                    <div className="p-3 bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-500/20 text-emerald-800 dark:text-emerald-400 rounded-xl text-xs flex items-center gap-2 font-medium">
+                      <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>{contactMessage}</span>
+                    </div>
+                  )}
+
+                  {contactStatus === 'error' && (
+                    <div className="p-3 bg-rose-50 dark:bg-rose-950/20 border border-rose-500/20 text-rose-800 dark:text-rose-400 rounded-xl text-xs flex items-center gap-2 font-medium">
+                      <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0" />
+                      <span>{contactMessage}</span>
+                    </div>
+                  )}
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[11px] font-bold text-slate-500 mb-1">Nama Lengkap Anda*</label>
                       <input 
                         type="text" 
+                        name="nama"
                         required 
                         placeholder="Contoh: Achmad Sodikin"
                         className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
@@ -1435,6 +1614,7 @@ export default function App() {
                       <label className="block text-[11px] font-bold text-slate-500 mb-1">Email Perusahaan / Pribadi*</label>
                       <input 
                         type="email" 
+                        name="email"
                         required 
                         placeholder="sodikin@email.com"
                         className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
@@ -1446,6 +1626,7 @@ export default function App() {
                     <label className="block text-[11px] font-bold text-slate-500 mb-1">Subjek Pesan / Pertanyaan*</label>
                     <input 
                       type="text" 
+                      name="subyek"
                       required 
                       placeholder="Contoh: Konsultasi Tarif Sertifikasi Produk Roti"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs outline-none focus:ring-2 focus:ring-emerald-500 font-sans"
@@ -1455,6 +1636,7 @@ export default function App() {
                   <div>
                     <label className="block text-[11px] font-bold text-slate-500 mb-1">Isi Pesan Konsultasi*</label>
                     <textarea 
+                      name="pesan"
                       required 
                       rows={4}
                       placeholder="Tuliskan rincian pertanyaan atau jenis produk yang ingin Anda sertifikasikan di sini..."
@@ -1464,10 +1646,24 @@ export default function App() {
 
                   <button 
                     type="submit"
-                    className="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans"
+                    disabled={contactSubmitting}
+                    className={`w-full py-3 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer font-sans ${
+                      contactSubmitting 
+                        ? 'bg-slate-400 dark:bg-slate-700 cursor-not-allowed' 
+                        : 'bg-emerald-600 hover:bg-emerald-700'
+                    }`}
                   >
-                    <Send className="w-4 h-4" />
-                    <span>Kirim Pesan Konsultasi</span>
+                    {contactSubmitting ? (
+                      <>
+                        <RefreshCw className="w-4 h-4 animate-spin" />
+                        <span>Mengirimkan Pesan...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send className="w-4 h-4" />
+                        <span>Kirim Pesan Konsultasi</span>
+                      </>
+                    )}
                   </button>
                 </form>
               </div>
