@@ -38,6 +38,7 @@ export interface UserAccount {
   is2faEnabled: boolean;
   tfaSecret?: string;
   createdAt: string;
+  role?: 'admin pusat' | 'admin' | 'admin editor' | 'admin auditor' | 'staff' | 'pelaku usaha';
 }
 
 export interface SystemNotification {

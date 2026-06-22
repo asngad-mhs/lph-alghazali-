@@ -13,6 +13,7 @@ import CertificationWizard from './components/CertificationWizard';
 import CertificatePrinter from './components/CertificatePrinter';
 import AnalyticsCharts from './components/AnalyticsCharts';
 import NotificationSimulator from './components/NotificationSimulator';
+import AdminCMSPanel from './components/AdminCMSPanel';
 import { lphLogo } from './assets/logo-base64';
 
 // Default initial mock database records
@@ -265,9 +266,30 @@ export default function App() {
       phone: '081234567890',
       is2faEnabled: true,
       tfaSecret: 'LPHGHAZALIDEMO2FA',
-      createdAt: '2026-05-01'
+      createdAt: '2026-05-01',
+      role: 'pelaku usaha'
     };
-    return saved ? JSON.parse(saved) : [defaultUser];
+    const defaultAdmin: UserAccount = {
+      email: 'admin@lph-alghazali.com',
+      name: 'Admin Pusat',
+      companyName: 'LPH Al-Ghazali Pusat',
+      nib: '0000000000000',
+      phone: '081111111111',
+      is2faEnabled: false,
+      createdAt: '2026-01-01',
+      role: 'admin pusat'
+    };
+    const defaultStaff: UserAccount = {
+      email: 'staff@lph-alghazali.com',
+      name: 'Staff Operasional',
+      companyName: 'LPH Al-Ghazali Ops',
+      nib: '0000000000001',
+      phone: '082222222222',
+      is2faEnabled: false,
+      createdAt: '2026-01-02',
+      role: 'staff'
+    };
+    return saved ? JSON.parse(saved) : [defaultUser, defaultAdmin, defaultStaff];
   });
 
   // Form input states
@@ -287,7 +309,7 @@ export default function App() {
 
   // Active view states
   const [activeTab, setActiveTab ] = useState<'landing' | 'dashboard' | 'profile'>('landing');
-  const [dashboardSection, setDashboardSection] = useState<'my-applications' | 'analytics' | 'notifications' | 'security'>('my-applications');
+  const [dashboardSection, setDashboardSection] = useState<'my-applications' | 'analytics' | 'notifications' | 'security' | 'cms-management'>('my-applications');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   
@@ -1937,7 +1959,7 @@ export default function App() {
                     </button>
                     
                     <p className="text-[10px] text-slate-450 dark:text-slate-500 text-center leading-normal mt-3">
-                      *Tips Demo: Masukkan alamat email buatan Anda sendiri (misal: <code className="font-bold text-emerald-600">user@example.com</code>) atau daftar akun baru berkualitas.
+                      *Tips Demo: Akses pelaku usaha: <code className="font-bold text-emerald-600">user@example.com</code>.<br /> Akses Admin Pusat LPH: <code className="font-bold text-emerald-600">admin@lph-alghazali.com</code> atau Staff: <code className="font-bold text-emerald-600">staff@lph-alghazali.com</code>.<br /> (Kata sandi bebas).
                     </p>
                   </form>
                 ) : (
@@ -2084,12 +2106,20 @@ export default function App() {
 
               {/* Sidebar Menu Navigation */}
               <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-3.5 rounded-3xl shadow-xs space-y-1">
-                {[
-                  { id: 'my-applications', label: 'Permohonan Sertifikasi', icon: ClipboardList },
-                  { id: 'analytics', label: 'Dasbor Analitik Real-time', icon: Activity },
-                  { id: 'notifications', label: 'Notifikasi Otomatis', icon: Mail },
-                  { id: 'security', label: 'Metrik Keamanan 2FA', icon: ShieldCheck }
-                ].map((item) => {
+                {(() => {
+                  const navItems = [
+                    { id: 'my-applications', label: 'Permohonan Sertifikasi', icon: ClipboardList },
+                    { id: 'analytics', label: 'Dasbor Analitik Real-time', icon: Activity },
+                    { id: 'notifications', label: 'Notifikasi Otomatis', icon: Mail },
+                    { id: 'security', label: 'Metrik Keamanan 2FA', icon: ShieldCheck }
+                  ];
+
+                  const adminRoles = ['admin pusat', 'admin', 'admin editor', 'admin auditor', 'staff'];
+                  if (currentUser.role && adminRoles.includes(currentUser.role)) {
+                    navItems.push({ id: 'cms-management', label: 'Manajemen CMS Admin', icon: Database as any });
+                  }
+
+                  return navItems.map((item) => {
                   const Icon = item.icon;
                   const isCurSection = dashboardSection === item.id;
                   return (
@@ -2106,7 +2136,8 @@ export default function App() {
                       <span>{item.label}</span>
                     </button>
                   );
-                })}
+                  });
+                })()}
               </div>
 
               {/* Action Trigger Welcomer */}
@@ -2385,6 +2416,10 @@ export default function App() {
                     userEmail={currentUser.email}
                   />
                 </div>
+              )}
+
+              {dashboardSection === 'cms-management' && (
+                <AdminCMSPanel dataLPH={dataLPH} setDataLPH={setDataLPH} />
               )}
 
             </div>
